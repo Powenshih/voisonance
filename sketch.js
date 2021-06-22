@@ -29,7 +29,6 @@ let prompts = [
   let voices = []; // An array to store recorded loops
   
   let voice, recorder;
-  // let changeVoice, recorder2;
   
   let c1 = 255;
   let c2 = 255;
@@ -225,25 +224,10 @@ let prompts = [
     noStroke();
   
     let v = map(volume, 0, 0.8, 0, 255); // left volume
-    // let v1 = int(map(volume, 0.01, 1, 1, 10), 1, 10);
-  
     let s1 = map(speed, -1, 1.5, 760, 160); // middle speed
     let s2 = map(speed, -1, 1.5, -380, 442.5); // middle speed
-  
-    // let p = map(panning, -1, 1, 50, 300); // right panning
-    // let p2 = int(map(panning, -1, 1, -5, 5), -5, 5);
     let pW = map(panning, -1, 1, 0, wW);
-    // let pH = int(map(panning, -1, 1, 0, wH), 0, wH);
-  
-    // let s1 = int(map(speed, -1, 1.5, -2, 10), -2, 10);
-  
-    // c =255;
-    // fill(255, 255, 255,s);
-    // ellipse(pW, wH/2, v);
-  
-    // let ss = map(speed, -1, 1.5, -1, 1.5); // middle speed
-    // pW+=ss;
-  
+
     let r = 238;
     let g = 255;
     let b = 65;
@@ -255,23 +239,6 @@ let prompts = [
   
     fill(r, g, b, v);
     ellipse(pW, wH / 2, s1, s2);
-  
-    //   if (pW > width - v || pW < v) {
-    //   ss = -ss;
-    // }
-    //   if (p4 > wH - v || p3 < v) {
-    //     s = -s;
-    //   }
-  
-    // ellipse(x, y, r*2, r*2);
-    // x += xspeed;
-    // y += yspeed;
-    // if (x > width - r || x < r) {
-    //   xspeed = -xspeed;
-    // }
-    // if (y > height - r || y < r) {
-    //   yspeed = -yspeed;
-    // }
   
     sound();
   
