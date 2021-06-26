@@ -1,18 +1,22 @@
 let prompts = [
   "NO. I don't like my voice because it doesn't sound like me.",
-  "Hothagellothago! Whothagat othagis yothagour nothagame?",
   "If I speak slower, much slower, my tone sounds lower than usual.",
-  "Everyday I exercise my voice just like I stretch my body.",
+  "Hothagellothago! Whothagat othagis yothagour nothagame?",
+  "Everyday I exercise my voice just like I stretch my body. Like hmmm, eeeee.",
   "Over the years my voice changes and I appreciate the way as I am getting older",
   "My voice sounds amazing because it changes from time to time.",
-  "The words I spoke to myself comfort me, encourage me and hurt me.",
   "Welcome to VOISONANCE. Say something, show what your voice can do.",
   "My voice is important because it tells story about who I am and where I am from.",
-  "My voice reveals my emotion in an interesting and unexpected way.",
+  "My voice reveals my emotion in an interesting & unexpected way.",
   "I always think that my voice is a part of my body and my identity.",
-  "There is something unique about my voice that reminds me about my mom.",
+  "There is something unique about my voice reminds me about my mom.",
   "Well. Although my voice sounds strange to me but it still belongs to me.",
-  "I always feel that my voice betrays me when I need it the most."
+  "I always feel that my voice betrays me when I need it the most.",
+  "I use my voice to speak up on issues that people are too afraid to talk about.",
+  "I have a low voice so people often mistake me for a man.",
+  "I hope people listen to what I say, not what I sound like.",
+  "I am a noise-making machine. I like to make noise.",
+  "My voice is a translation from what I think to what you hear."
 ];
 
 let promptFloats = [];
@@ -38,9 +42,8 @@ let volume, speed, panning;
 
 let sDirection, vDirection, pDirection;
 
-let startTime = 8000; // ten second transition to next scene
-let listenTime = 120000;
-
+let startTime = 3000; // ten second transition to next scene
+let listenTime = 3000;
 
 let pastTime;
 
@@ -75,11 +78,13 @@ function setup() {
 function draw() {
   vol = mic.getLevel();
 
-  if (state === 0 && vol <= 0.2) {
+  // pastTime = millis()
+
+  if (state === 0 && vol <= 0.1) {
     sceneIntro();
   }
 
-  if (state === 0 && vol > 0.2) {
+  if (state === 0 && vol > 0.1) {
     console.log("Voice volume trigger", vol);
     console.log("Now voice recording");
     recordSound();
@@ -115,10 +120,11 @@ function draw() {
   }
   if (state === 3) {
     scenePlay(); // circles
-      if (millis() > pastTime + listenTime) {
-      state=0;
+    if (millis() > pastTime + listenTime) {
+      state = 0;
+      voice.stop();
       // pastTime = millis();
-        location.refresh("https://harmless-plump-scribe.glitch.me");
+      // location.refresh("https://harmless-plump-scribe.glitch.me");
     }
   }
 }
@@ -143,13 +149,7 @@ function sceneIntro() {
   //   wH / 2
   // );
   textSize(20);
-  text(
-    "or a pick prompt if you like to",
-    wW / 4,
-    wH / 2,
-    wW / 2,
-    wH / 2
-  );
+  text("or a pick prompt if you like to", wW / 4, wH / 2, wW / 2, wH / 2);
 }
 
 function recordSound() {
@@ -279,7 +279,7 @@ function scenePlay() {
   fill(238, 255, 65);
   textSize(20);
   text(
-    "welcome to a 2 minutes voiced-sound journey",
+    "This voiced-sound journey will take two minutes",
     wW / 4,
     wH / 2,
     wW / 2,
@@ -376,11 +376,11 @@ class promptFloat {
   }
 }
 
-function windowResized() {
-  resizeCanvas(wW, wH);
-  for (let i = 0; i < promptFloats.length; i++) {
-    promptFloats[i].pos = createVector(random(30, width - 30), random(height));
-  }
-}
+// window.location.refresh("https://harmless-plump-scribe.glitch.me");
 
-// location.refresh("https://harmless-plump-scribe.glitch.me");
+// function windowResized() {
+//   resizeCanvas(wW, wH);
+//   for (let i = 0; i < promptFloats.length; i++) {
+//     promptFloats[i].pos = createVector(random(30, width - 30), random(height));
+//   }
+// }
