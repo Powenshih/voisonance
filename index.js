@@ -7,7 +7,7 @@ let prompts = [
   "My voice",
   "___...",
   "___!",
-  "_____sounds like?",
+  "_____ sounds like?",
   "_____",
   "_____ ___ _____"
 ];
@@ -53,17 +53,31 @@ function sceneIntro() {
   text(
     "VOISONANCE",
     wW / 4,
-    wH / 4 - 35,
+    wH / 4 - 40,
     wW / 2,
     wH / 2
   );
   textSize(20);
   text("Po-Wen Shih | Thesis | IMA Lowres 2021", wW / 4, wH / 4, wW / 2, wH / 2);
-  textSize(20);
-  text(
-    "Click to start a voiced sound journey",
+  textSize(15);
+  // text(
+  //   "- click to enable recording -",
+  //   wW / 4,
+  //   wH / 2-60,
+  //   wW / 2,
+  //   wH / 2
+  // );
+      text(
+    "Click to allow voice recording",
     wW / 4,
     wH / 2,
+    wW / 2,
+    wH / 2
+  );
+     text(
+    "< Your voice-sound will live in this sound experience temporarily >",
+    wW / 4,
+    wH / 2+30,
     wW / 2,
     wH / 2
   );
@@ -88,7 +102,7 @@ class promptFloat {
   display() {
     noStroke();
     fill(255, map(this.pos.y, 0, wH, wH * 0.25, 0));
-    textFont("AVENIR");
+    textFont("Montserrat");
     textSize(20);
     textAlign(CENTER, CENTER);
     text(this.prompt[this.idx], this.pos.x, this.pos.y);

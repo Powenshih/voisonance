@@ -23,7 +23,7 @@ let promptFloats = [];
 
 let g1, g2, wW, wH;
 
-let mic, fft, filter, vol;
+let mic, fft, fftp, filter, vol;
 let state = 0;
 
 let speedSpeed = 0.1;
@@ -42,8 +42,8 @@ let volume, speed, panning;
 
 let sDirection, vDirection, pDirection;
 
-let startTime = 3000; // ten second transition to next scene
-let listenTime = 3000;
+let startTime = 9000; // ten second transition to next scene
+let listenTime = 120000;
 
 let pastTime;
 
@@ -64,8 +64,10 @@ function setup() {
   recorder = new p5.SoundRecorder();
   recorder.setInput(mic);
 
-  fft = new p5.FFT(0.5, 256);
+  fft = new p5.FFT(0.5, 1024);
   fft.setInput(mic);
+  fftp = new p5.FFT(0.5, 1024);
+  fftp.setInput(voice);
 
   volume = 1;
   speed = 1;
@@ -80,11 +82,11 @@ function draw() {
 
   // pastTime = millis()
 
-  if (state === 0 && vol <= 0.1) {
+  if (state === 0 && vol <= 0.0005) {
     sceneIntro();
   }
 
-  if (state === 0 && vol > 0.1) {
+  if (state === 0 && vol > 0.0005 ) {
     console.log("Voice volume trigger", vol);
     console.log("Now voice recording");
     recordSound();
@@ -139,17 +141,17 @@ function sceneIntro() {
   fill(238, 255, 65);
   textAlign(CENTER, CENTER);
   textSize(34.5);
-  text("SAY SOMETHING ABOUT YOUR VOICE", wW / 4, wH / 4 - 25, wW / 2, wH / 2);
-  // textSize(20);
-  // text(
-  //   "You are welcome to say anything or a prompt if you like to",
-  //   wW / 4,
-  //   wH / 4,
-  //   wW / 2,
-  //   wH / 2
-  // );
-  textSize(20);
-  text("or a pick prompt if you like to", wW / 4, wH / 2, wW / 2, wH / 2);
+  text("SAY SOMETHING ABOUT YOUR VOICE", wW / 4, wH / 4 - 40, wW / 2, wH / 2);
+  textSize(15);
+  text("or a pick prompt if you like to", wW / 4, wH / 4, wW / 2, wH / 2);
+  textSize(15);
+  text(
+    "Recording will only start once your voice up",
+    wW / 4,
+    wH / 2,
+    wW / 2,
+    wH / 2
+  );
 }
 
 function recordSound() {
@@ -187,34 +189,19 @@ function sceneRecording() {
   }
   endShape();
 
+  noStroke();
   fill(238, 255, 65);
   textAlign(CENTER, CENTER);
   textSize(34.5);
-  // text("PLEASE SAY A LONG SENTENCE", wW / 4, wH / 4 - 25, wW / 2, wH / 2);
-  // textSize(20);
-  // text(
-  //   "You are welcome to say anything or a prompt if you like to",
-  //   wW / 4,
-  //   wH / 4,
-  //   wW / 2,
-  //   wH / 2
-  // );
-  // textSize(20);
-  // text(
-  //   "Speak to start recording voiced sound when you are ready",
-  //   wW / 4,
-  //   wH / 2,
-  //   wW / 2,
-  //   wH / 2
-  // );
-
-  // fill(255);
-  // textAlign(CENTER, CENTER);
-  // textSize(30);
-  text("Finish your sentence in 10 seconds", wW / 4, wH / 4, wW / 2, wH / 2);
-  // fill(255);
-  // textSize(20);
-  // text("(this could be done in countdown...)", wW / 4, wH / 2, wW / 2, wH / 2);
+  text("YOUR VOICE IS RECORDING", wW / 4, wH / 4, wW / 2, wH / 2);
+  textSize(15);
+  text(
+    "Complete a long sentence in ten seconds",
+    wW / 4,
+    wH / 2,
+    wW / 2,
+    wH / 2
+  );
 }
 
 function recordStop() {
@@ -226,13 +213,14 @@ function sceneReady() {
   fill(238, 255, 65);
   // textAlign(CENTER, CENTER);
   // text("In VOISONANCE", wW / 4, 0, wW / 2, wH / 2);
+  noStroke();
   textSize(30);
   text(
     "OPENNESS AND IMAGINATION ARE MORE IMPORTANT THAN JUDGEMENT",
     width / 2,
     height / 2
   );
-  textSize(20);
+  textSize(15);
   text("The experience starts soon...", wW / 4, wH / 2, wW / 2, wH / 2);
 }
 
@@ -255,36 +243,56 @@ function scenePlay() {
 
   // let h = map(vol, 0, 1, wH / 2, 0);
 
-  noStroke();
-
+  // let spectrum = fftp.analyze();
+  // noStroke();
+  // for (let i = 0; i < spectrum.length; i++) {
+  //   let x = map(i, 0, spectrum.length, 0, wW);
+  //   let h = -wH + map(spectrum[i], 0, 255, wH, 0);
+  //   rect(x, wH, wW / spectrum.length, h);
+  // }
+  
   let v = map(volume, 0, 0.8, 0, 255); // left volume
-  let s1 = map(speed, -1, 1.5, 760, 160); // middle speed
+  let s1 = map(speed, -1, 1.5, 0, 5); // middle speed
   let s2 = map(speed, -1, 1.5, -380, 442.5); // middle speed
   let pW = map(panning, -1, 1, 0, wW);
-
-  let r = 238;
-  let g = 255;
-  let b = 65;
-
-  if (speed <= 0.15) {
-    r = 255;
-    b = 255;
+  
+  let waveform = fftp.waveform();
+  noFill();
+  beginShape();
+  strokeWeight(s1);
+  stroke(255,v);
+  for (let i = 0; i < waveform.length; i++) {
+    let x = map(i, 0, waveform.length, 0, wW);
+    let y = map(waveform[i], -1, 1, 0, wH);
+    vertex(x, y);
   }
+  endShape();
 
-  fill(r, g, b, v);
-  ellipse(pW, wH / 2, s1, s2);
+
+
+//   let v = map(volume, 0, 0.8, 0, 255); // left volume
+//   let s1 = map(speed, -1, 1.5, 760, 160); // middle speed
+//   let s2 = map(speed, -1, 1.5, -380, 442.5); // middle speed
+//   let pW = map(panning, -1, 1, 0, wW);
+
+//   let r = 238;
+//   let g = 255;
+//   let b = 65;
+
+//   if (speed <= 0.15) {
+//     r = 255;
+//     b = 255;
+//   }
+
+//   fill(r, g, b, v);
+//   ellipse(pW, wH / 2, s1, s2);
 
   sound();
 
+  noStroke();
   fill(238, 255, 65);
-  textSize(20);
-  text(
-    "This voiced-sound journey will take two minutes",
-    wW / 4,
-    wH / 2,
-    wW / 2,
-    wH / 2
-  );
+  textSize(15);
+  text("The journey will take two minutes", wW / 4, wH / 2, wW / 2, wH / 2);
 }
 
 function sound() {
@@ -364,7 +372,7 @@ class promptFloat {
   display() {
     noStroke();
     fill(255, map(this.pos.y, 0, wH, wH * 0.25, 0));
-    textFont("AVENIR");
+    textFont("Montserrat");
     textSize(20);
     textAlign(CENTER, CENTER);
     text(this.prompt[this.idx], this.pos.x, this.pos.y);
@@ -376,7 +384,7 @@ class promptFloat {
   }
 }
 
-// window.location.refresh("https://harmless-plump-scribe.glitch.me");
+window.location.refresh("https://harmless-plump-scribe.glitch.me");
 
 // function windowResized() {
 //   resizeCanvas(wW, wH);
