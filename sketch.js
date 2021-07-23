@@ -42,8 +42,9 @@ let volume, speed, panning;
 
 let sDirection, vDirection, pDirection;
 
-let startTime = 9000; // ten second transition to next scene
-let listenTime = 120000;
+let startTime = 7000; // ten second transition to next scene
+let listenTime = 100000;
+let stopTime = 10000;
 
 let pastTime;
 
@@ -82,11 +83,11 @@ function draw() {
 
   // pastTime = millis()
 
-  if (state === 0 && vol <= 0.0005) {
+  if (state === 0 && vol <= 0.005) {
     sceneIntro();
   }
 
-  if (state === 0 && vol > 0.0005 ) {
+  if (state === 0 && vol > 0.005) {
     console.log("Voice volume trigger", vol);
     console.log("Now voice recording");
     recordSound();
@@ -124,11 +125,45 @@ function draw() {
     scenePlay(); // circles
     if (millis() > pastTime + listenTime) {
       state = 0;
+      // thankYou();
+      // state++;
       voice.stop();
       // pastTime = millis();
-      // location.refresh("https://harmless-plump-scribe.glitch.me");
+      // if (millis() > pastTime + stopTime) {
+        // reloadThePage();
+      // }
+      // pastTime = millis();
     }
   }
+  // if (state === 4) {
+  //   if (millis() > pastTime + stopTime) {
+  //   state = 0;
+  // voice.stop();
+  // reloadThePage();
+  //   }
+  // }
+}
+
+function thankYou() {
+  background(25);
+  for (let i = 0; i < promptFloats.length; i++) {
+    promptFloats[i].float();
+  }
+
+  fill(238, 255, 65);
+  textAlign(CENTER, CENTER);
+  textSize(30);
+  text("THANK YOU", wW / 4, wH / 4 - 40, wW / 2, wH / 2);
+  // textSize(15);
+  // text("or a pick prompt if you like to", wW / 4, wH / 4, wW / 2, wH / 2);
+  // textSize(15);
+  // text(
+  //   "Recording will only start once your voice up",
+  //   wW / 4,
+  //   wH / 2,
+  //   wW / 2,
+  //   wH / 2
+  // );
 }
 
 function sceneIntro() {
@@ -140,7 +175,7 @@ function sceneIntro() {
 
   fill(238, 255, 65);
   textAlign(CENTER, CENTER);
-  textSize(34.5);
+  textSize(30);
   text("SAY SOMETHING ABOUT YOUR VOICE", wW / 4, wH / 4 - 40, wW / 2, wH / 2);
   textSize(15);
   text("or a pick prompt if you like to", wW / 4, wH / 4, wW / 2, wH / 2);
@@ -250,17 +285,17 @@ function scenePlay() {
   //   let h = -wH + map(spectrum[i], 0, 255, wH, 0);
   //   rect(x, wH, wW / spectrum.length, h);
   // }
-  
+
   let v = map(volume, 0, 0.8, 0, 255); // left volume
   let s1 = map(speed, -1, 1.5, 0, 5); // middle speed
   let s2 = map(speed, -1, 1.5, -380, 442.5); // middle speed
   let pW = map(panning, -1, 1, 0, wW);
-  
+
   let waveform = fftp.waveform();
   noFill();
   beginShape();
   strokeWeight(s1);
-  stroke(255,v);
+  stroke(255, v);
   for (let i = 0; i < waveform.length; i++) {
     let x = map(i, 0, waveform.length, 0, wW);
     let y = map(waveform[i], -1, 1, 0, wH);
@@ -268,24 +303,22 @@ function scenePlay() {
   }
   endShape();
 
+  //   let v = map(volume, 0, 0.8, 0, 255); // left volume
+  //   let s1 = map(speed, -1, 1.5, 760, 160); // middle speed
+  //   let s2 = map(speed, -1, 1.5, -380, 442.5); // middle speed
+  //   let pW = map(panning, -1, 1, 0, wW);
 
+  //   let r = 238;
+  //   let g = 255;
+  //   let b = 65;
 
-//   let v = map(volume, 0, 0.8, 0, 255); // left volume
-//   let s1 = map(speed, -1, 1.5, 760, 160); // middle speed
-//   let s2 = map(speed, -1, 1.5, -380, 442.5); // middle speed
-//   let pW = map(panning, -1, 1, 0, wW);
+  //   if (speed <= 0.15) {
+  //     r = 255;
+  //     b = 255;
+  //   }
 
-//   let r = 238;
-//   let g = 255;
-//   let b = 65;
-
-//   if (speed <= 0.15) {
-//     r = 255;
-//     b = 255;
-//   }
-
-//   fill(r, g, b, v);
-//   ellipse(pW, wH / 2, s1, s2);
+  //   fill(r, g, b, v);
+  //   ellipse(pW, wH / 2, s1, s2);
 
   sound();
 
@@ -296,21 +329,21 @@ function scenePlay() {
 }
 
 function sound() {
-  if (volume < 0) {
+  if (volume < 0.35) {
     vDirection = 1;
-  } else if (volume > 0.8) {
+  } else if (volume > 1) {
     vDirection = -1;
   }
 
-  if (volume < 0.8) {
+  if (volume < 0.35) {
     volumeSpeed = vDirection * 0.001;
-  } else if (volume > 0) {
+  } else if (volume > 1) {
     volumeSpeed = vDirection * 0.001;
   }
 
   volume += volumeSpeed;
   voice.amp(volume);
-  // console.log("volume", volume);
+  console.log("volume", volume);
 
   // 6/18 adam's suggestion
   // change the direction when you exceed the bounds
@@ -327,7 +360,7 @@ function sound() {
   } else if (speed < 0.9) {
     speedSpeed = sDirection * 0.005;
   } else if (speed < 1.1) {
-    speedSpeed = sDirection * 0.0001;
+    speedSpeed = sDirection * 0.0002;
   } else {
     speedSpeed = sDirection * 0.005;
   }
@@ -384,7 +417,14 @@ class promptFloat {
   }
 }
 
-window.location.refresh("https://harmless-plump-scribe.glitch.me");
+// window.location.refresh("https://antique-cake-tub.glitch.me");
+// console.log("refresh")
+function reloadThePage() {
+  // window.location.reload("https://antique-cake-tub.glitch.me");
+  console.log("refresh");
+
+  location.replace("https://antique-cake-tub.glitch.me/");
+}
 
 // function windowResized() {
 //   resizeCanvas(wW, wH);
